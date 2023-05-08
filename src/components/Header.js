@@ -1,11 +1,40 @@
-import React from "react";
+import React ,{useState} from "react";
 import styled from "styled-components";
+import { DatePicker, Form,Input ,Modal,Button} from 'antd';
+
 const Header = () =>{
     const member1 = {
         name: "test1",
-        money: "50000"
-        
+        money: "50000"   
     }
+    const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const [date,setDate ] = useState();
+  const onChangeDate = (e)=>{
+    setDate(e.target.value)
+    console.log(date);
+  }
+  const [title, setTitle] = useState("");
+  const onChangeTitle = (e)=>{
+    setTitle(e.target.value)
+    console.log(title)
+  }
+  const [money,setMoney ] = useState(0);
+  
+  const onChangeMoney = (e)=>{
+    setMoney(e.target.value)
+    console.log(money)
+  }
+
     return(
         <HeaderWrapper>
             <div className="header"></div>
@@ -23,6 +52,20 @@ const Header = () =>{
                 <Minus><p>나간 돈</p>
                 <p>-4000</p></Minus>
             </Money>
+            <Button type="primary" onClick={showModal}>
+                추가하기
+            </Button>
+            <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            <Form.Item name="date-picker" label="날짜" value={date} onChange={onChangeDate}>
+                <DatePicker />
+            </Form.Item>
+            <Form.Item name="title" label="제목"  value={title} onChange={onChangeTitle}>
+                <Input />
+            </Form.Item>
+            <Form.Item name="money" label="금액"  value={money} onChange={onChangeMoney}>
+                <Input />
+            </Form.Item>
+        </Modal>
         </HeaderWrapper>
     )
 }

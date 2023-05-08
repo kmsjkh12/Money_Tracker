@@ -1,10 +1,11 @@
 import React from "react";
-import Layout from "./components/Layout";
+import Main from "./page/Main";
 const App = () =>{
   return(
-    <div>
-      <Layout />
-    </div>
+    <>
+      <Main />
+      </>
+    
   )
 }
 
