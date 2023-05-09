@@ -13,7 +13,7 @@ const Main = () =>{
     ) 
 }
 const LayoutWrapper = styled.div`
-width: 375px;
+width: 420px;
 border-radius: 35px;
 box-shadow: 8px 8px 40px rgba(143, 143, 150, 0.55),
            -10px -10px 30px rgb(255, 255, 255, .8);

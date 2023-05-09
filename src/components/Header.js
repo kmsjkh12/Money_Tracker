@@ -1,39 +1,57 @@
-import React ,{useState} from "react";
+import React ,{useCallback, useState, useRef} from "react";
 import styled from "styled-components";
-import { DatePicker, Form,Input ,Modal,Button} from 'antd';
-
+import { useDispatch ,useSelector} from "react-redux";
+import { DatePicker ,Button,Modal, Radio, Input, Form} from "antd";
+import { INSERT } from "../reducer/tracker";
 const Header = () =>{
     const member1 = {
         name: "test1",
-        money: "50000"   
     }
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const nextId = useRef(4);
+  const dispatch = useDispatch(); 
+  const {plus} = useSelector((state)=>state.tracker)
+  const {minus} = useSelector((state)=>state.tracker)
+  const [ date, setDate ] = useState(new Date());
+  const onChangeDate = (date,dateString) => {
+    setDate(dateString)
+    };
+  const dateFormat = "YYYY-MM-DD";
+
+  const [title, setTitle] = useState("");
+  const onChangeTitle = (e)=>{
+    setTitle(e.target.value)
+  }
+
+  const [money,setMoney ] = useState(0);
+  const onChangeMoney = (e)=>{
+    setMoney(e.target.value)
+  }
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
   };
   const handleOk = () => {
+    dispatch({
+        type:INSERT,
+        data:{
+            id:nextId.current+=1,
+            type:value,
+            money:money,
+            spend:title,
+            date:date
+        }
+    })
     setIsModalOpen(false);
   };
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
-  const [date,setDate ] = useState();
-  const onChangeDate = (e)=>{
-    setDate(e.target.value)
-    console.log(date);
-  }
-  const [title, setTitle] = useState("");
-  const onChangeTitle = (e)=>{
-    setTitle(e.target.value)
-    console.log(title)
-  }
-  const [money,setMoney ] = useState(0);
-  
-  const onChangeMoney = (e)=>{
-    setMoney(e.target.value)
-    console.log(money)
-  }
+  const [value, setValue] = useState("수입");
+  const onChange = (e) => {
+    setValue(e.target.value);
+  };
 
     return(
         <HeaderWrapper>
@@ -42,31 +60,51 @@ const Header = () =>{
                 <div className="month_money">
                     <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;안녕하세요! {member1.name}</p>
                     <p>지난 1개월 간 사용한 돈</p>
-                    <SepndMoney>₩{member1.money}</SepndMoney>
+                    <SepndMoney>₩{minus}</SepndMoney>
                 </div>
             </Month>
             <Money>
                 <Plus><p>들어온 돈</p>
-                <p>+5000</p></Plus>
+                <p>+{plus}</p></Plus>
                 <Vline></Vline>
                 <Minus><p>나간 돈</p>
-                <p>-4000</p></Minus>
+                <p>-{minus}</p></Minus>
             </Money>
             <Button type="primary" onClick={showModal}>
-                추가하기
-            </Button>
-            <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-            <Form.Item name="date-picker" label="날짜" value={date} onChange={onChangeDate}>
-                <DatePicker />
-            </Form.Item>
-            <Form.Item name="title" label="제목"  value={title} onChange={onChangeTitle}>
-                <Input />
-            </Form.Item>
-            <Form.Item name="money" label="금액"  value={money} onChange={onChangeMoney}>
-                <Input />
-            </Form.Item>
-        </Modal>
-        </HeaderWrapper>
+        추가하기
+      </Button>
+      <Modal title="내역 추가" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Form
+      style={{
+        maxWidth: 600,
+      }}
+    >
+        <Form.Item
+            name="date"
+            label="날짜"
+        >
+        <DatePicker
+          onChange={onChangeDate}
+          format={dateFormat}
+          style={{width:"420px"}}
+        />        </Form.Item>
+        <Form.Item name="title" label="제목">
+        <Input placeholder="사용 내역을 입력하세요" value={title} onChange={onChangeTitle} />
+        </Form.Item>
+        <Form.Item name="money" label="금액">
+        <Input placeholder="금액을 입력하세요" value={money} onChange={onChangeMoney}/>
+        </Form.Item>
+        <Form.Item>
+        <Radio.Group onChange={onChange} value={value}>
+      <Radio value={"수입"}>수입</Radio>
+      <Radio value={"지출"}>지출</Radio>
+    </Radio.Group>
+        </Form.Item>
+      </Form>
+       
+         
+      </Modal>
+              </HeaderWrapper>
     )
 }
 const HeaderWrapper = styled.div`
@@ -88,7 +126,7 @@ const Money = styled.div`
     margin-top:20px;
     display:flex;
     text-align:center;
-`
+    `
 
 const Plus = styled.div`
 width:80px;
